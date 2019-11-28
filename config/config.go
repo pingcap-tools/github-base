@@ -7,10 +7,11 @@ import (
 
 // Config contains configuration options.
 type Config struct {
-	Host        string      `toml:"host"`
-	Port        int         `toml:"port"`
-	GithubToken string      `toml:"githubToken"`
-	Database    *Database   `toml:"database"`
+	Host         string      `toml:"host"`
+	Port         int         `toml:"port"`
+	GithubToken  string      `toml:"github"`
+	GithubSecret string      
+	Database     *Database   `toml:"database"`
 }
 
 // Database defines db configuration

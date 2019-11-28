@@ -53,7 +53,7 @@ func (hdl *ManagerHandler)Webhook(ctx iris.Context) {
 
 	// restore body for github ValidatePayload use
 	r.Body = ioutil.NopCloser(bytes.NewBuffer(body))
-	payload, err := github.ValidatePayload(r, []byte("pingcap2019"))
+	payload, err := github.ValidatePayload(r, []byte(hdl.mgr.GetConfig().GithubSecret))
 	if err != nil {
 		// invalid payload
 		ctx.StatusCode(iris.StatusInternalServerError)

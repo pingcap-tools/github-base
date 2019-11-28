@@ -12,10 +12,11 @@ func CreateRouter(app *iris.Application, mgr *manager.Manager) {
 	// crs := cors.New(cors.Options{
 	// 	AllowCredentials: true,
 	// })
-	// _ = app.Party("/api", crs).AllowMethods(iris.MethodOptions)
+	// party := app.Party("/api", crs).AllowMethods(iris.MethodOptions)
+	party := app.Party("/api")
 
 	// ping
-	app.Get("/ping", hdl.Ping)
+	party.Get("/ping", hdl.Ping)
 	// github webhook
-	app.Post("/webhook", hdl.Webhook)
+	party.Post("/webhook", hdl.Webhook)
 }

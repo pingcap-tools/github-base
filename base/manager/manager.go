@@ -1,12 +1,14 @@
 package manager
 
 import (
+	"sync"
 	"github.com/pingcap/github-base/config"
 	"github.com/pingcap/github-base/manager"
 )
 
 // Manager struct
 type Manager struct {
+	sync.Mutex
 	mgr *manager.Manager
 }
 

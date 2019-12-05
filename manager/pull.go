@@ -14,9 +14,8 @@ func (mgr *Manager)GetPullByNumber(repo *types.Repo, number int) (*types.Pull, e
 	if err := mgr.storage.FindOne(&pull, "owner=? AND repo=? AND pull_number=?", repo.GetOwner(), repo.GetRepo(), number); err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, nil
-		} else {
-			return nil, errors.Trace(err)
 		}
+		return nil, errors.Trace(err)
 	}
 	return &pull, nil
 }

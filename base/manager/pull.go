@@ -14,6 +14,8 @@ func (mgr *Manager) ProcessPullEvent(repo *types.Repo, event *github.PullRequest
 
 // ProcessPull process pull
 func (mgr *Manager) ProcessPull(repo *types.Repo, pull *github.PullRequest) {
+	mgr.Lock()
+	defer mgr.Unlock()
 	pullPatch, err := mgr.mgr.MakePullPatch(repo, pull)
 	if err != nil {
 		log.Errorf("make pull patch failed %v", errors.ErrorStack(err))

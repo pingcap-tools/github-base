@@ -63,7 +63,7 @@ func (mgr *Manager)ProcessPullRequestReviewComment(repo *types.Repo, pull *githu
 
 // ProcessPullRequestReview process pull request review
 func (mgr *Manager)ProcessPullRequestReview(repo *types.Repo, pull *github.PullRequest, review *github.PullRequestReview) {
-	patch, err := mgr.mgr.MakeCommentPatch(repo, pull, &types.CommentAttach{
+	patch, err := mgr.mgr.MakeCommentPatch(repo, review, &types.CommentAttach{
 		CommentType: "review",
 		Number: pull.GetNumber(),
 		CreatedAt: review.GetSubmittedAt(),

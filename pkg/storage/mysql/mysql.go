@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"fmt"
+
 	"github.com/pingcap/github-base/config"
 	"github.com/pingcap/github-base/pkg/storage/basic"
 
@@ -19,7 +20,7 @@ func Connect(config *config.Database) (basic.Driver, error) {
 	connect := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		config.Username, config.Password, config.Host, config.Port, config.Database)
 	db, err := gorm.Open("mysql", connect)
-	db.LogMode(true)
+	// db.LogMode(true)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}

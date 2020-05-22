@@ -2,13 +2,14 @@ package api
 
 import (
 	"bytes"
-	"github.com/google/go-github/github"
+	"io/ioutil"
+	"strings"
+
+	"github.com/google/go-github/v30/github"
 	"github.com/juju/errors"
 	"github.com/kataras/iris"
 	"github.com/ngaut/log"
 	"github.com/pingcap/github-base/pkg/types"
-	"io/ioutil"
-	"strings"
 )
 
 // HookBody for parsing webhook
@@ -19,7 +20,7 @@ type HookBody struct {
 }
 
 // Webhook process webhook
-func (hdl *ManagerHandler)Webhook(ctx iris.Context) {
+func (hdl *ManagerHandler) Webhook(ctx iris.Context) {
 	r := ctx.Request()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -48,7 +49,7 @@ func (hdl *ManagerHandler)Webhook(ctx iris.Context) {
 	}
 	repo := &types.Repo{
 		Owner: repoInfo[0],
-		Repo: repoInfo[1],
+		Repo:  repoInfo[1],
 	}
 
 	// restore body for github ValidatePayload use

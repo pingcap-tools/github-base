@@ -1,7 +1,7 @@
 package manager
 
 import (
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v30/github"
 	"github.com/jinzhu/gorm"
 	"github.com/juju/errors"
 	"github.com/pingcap/github-base/pkg/types"
@@ -9,7 +9,7 @@ import (
 )
 
 // GetPullByNumber get a pull by repo and number
-func (mgr *Manager)GetPullByNumber(repo *types.Repo, number int) (*types.Pull, error) {
+func (mgr *Manager) GetPullByNumber(repo *types.Repo, number int) (*types.Pull, error) {
 	var pull types.Pull
 	if err := mgr.storage.FindOne(&pull, "owner=? AND repo=? AND pull_number=?", repo.GetOwner(), repo.GetRepo(), number); err != nil {
 		if gorm.IsRecordNotFoundError(err) {
@@ -21,14 +21,14 @@ func (mgr *Manager)GetPullByNumber(repo *types.Repo, number int) (*types.Pull, e
 }
 
 // CreatePull create from github pull
-func (mgr *Manager)CreatePull(repo *types.Repo, pull *github.PullRequest) error {
+func (mgr *Manager) CreatePull(repo *types.Repo, pull *github.PullRequest) error {
 	mgr.Lock()
 	defer mgr.Unlock()
 	return mgr.CreatePullNoLock(repo, pull)
 }
 
 // CreatePullNoLock create from github pull without lock
-func (mgr *Manager)CreatePullNoLock(repo *types.Repo, pull *github.PullRequest) error {
+func (mgr *Manager) CreatePullNoLock(repo *types.Repo, pull *github.PullRequest) error {
 	p, err := mgr.MakePullPatch(repo, pull)
 	if err != nil {
 		return errors.Trace(err)
@@ -40,12 +40,12 @@ func (mgr *Manager)CreatePullNoLock(repo *types.Repo, pull *github.PullRequest) 
 }
 
 // UpdatePull update from github pull
-func (mgr *Manager)UpdatePull(pull *types.Pull) error {
+func (mgr *Manager) UpdatePull(pull *types.Pull) error {
 	return errors.Trace(mgr.storage.Save(pull))
 }
 
 // MakePullPatch make patch from pull
-func (mgr *Manager)MakePullPatch(repo *types.Repo, pull *github.PullRequest) (*types.Pull, error) {
+func (mgr *Manager) MakePullPatch(repo *types.Repo, pull *github.PullRequest) (*types.Pull, error) {
 	p, err := mgr.GetPullByNumber(repo, pull.GetNumber())
 	if err == nil && p == nil {
 		return mgr.MakePull(repo, pull)
@@ -77,7 +77,7 @@ func (mgr *Manager)MakePullPatch(repo *types.Repo, pull *github.PullRequest) (*t
 }
 
 // MakePull make from github pull
-func (mgr *Manager)MakePull(repo *types.Repo, pull *github.PullRequest) (*types.Pull, error) {
+func (mgr *Manager) MakePull(repo *types.Repo, pull *github.PullRequest) (*types.Pull, error) {
 	isMember, err := mgr.isMember(pull.GetUser().GetLogin())
 	if err != nil {
 		return nil, errors.Trace(err)
@@ -97,20 +97,20 @@ func (mgr *Manager)MakePull(repo *types.Repo, pull *github.PullRequest) (*types.
 	}
 
 	p := types.Pull{
-		Owner: repo.GetOwner(),
-		Repo: repo.GetRepo(),
-		Number: pull.GetNumber(),
-		Title: pull.GetTitle(),
-		Body: pull.GetBody(),
-		User: pull.GetUser().GetLogin(),
+		Owner:       repo.GetOwner(),
+		Repo:        repo.GetRepo(),
+		Number:      pull.GetNumber(),
+		Title:       pull.GetTitle(),
+		Body:        pull.GetBody(),
+		User:        pull.GetUser().GetLogin(),
 		Association: pull.GetAuthorAssociation(),
-		Relation: relation,
-		Label: util.EncodeStringSlice(labels),
-		Status: status,
-		CreatedAt: pull.GetCreatedAt(),
-		UpdatedAt: pull.GetUpdatedAt(),
-		ClosedAt: pull.GetClosedAt(),
-		MergedAt: pull.GetMergedAt(),
+		Relation:    relation,
+		Label:       util.EncodeStringSlice(labels),
+		Status:      status,
+		CreatedAt:   pull.GetCreatedAt(),
+		UpdatedAt:   pull.GetUpdatedAt(),
+		ClosedAt:    pull.GetClosedAt(),
+		MergedAt:    pull.GetMergedAt(),
 	}
 	return &p, nil
 }

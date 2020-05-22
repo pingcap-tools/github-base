@@ -1,33 +1,33 @@
 package manager
 
 import (
+	"github.com/google/go-github/v30/github"
 	"github.com/ngaut/log"
-	"github.com/google/go-github/github"
 	"github.com/pingcap/github-base/pkg/types"
 )
 
 // ProcessIssueCommentEvent process issue comment event
-func (mgr *Manager)ProcessIssueCommentEvent(repo *types.Repo, event *github.IssueCommentEvent) {
-	mgr.ProcessIssueComment(repo, event.GetIssue(), event.GetComment())	
+func (mgr *Manager) ProcessIssueCommentEvent(repo *types.Repo, event *github.IssueCommentEvent) {
+	mgr.ProcessIssueComment(repo, event.GetIssue(), event.GetComment())
 }
 
 // ProcessPullRequestReviewCommentEvent process pull request review comment event
-func (mgr *Manager)ProcessPullRequestReviewCommentEvent(repo *types.Repo, event *github.PullRequestReviewCommentEvent) {
+func (mgr *Manager) ProcessPullRequestReviewCommentEvent(repo *types.Repo, event *github.PullRequestReviewCommentEvent) {
 	mgr.ProcessPullRequestReviewComment(repo, event.GetPullRequest(), event.GetComment())
 }
 
 // ProcessPullRequestReviewEvent process pull request review event
-func (mgr *Manager)ProcessPullRequestReviewEvent(repo *types.Repo, event *github.PullRequestReviewEvent) {
+func (mgr *Manager) ProcessPullRequestReviewEvent(repo *types.Repo, event *github.PullRequestReviewEvent) {
 	mgr.ProcessPullRequestReview(repo, event.GetPullRequest(), event.GetReview())
 }
 
 // ProcessIssueComment process issue comment
-func (mgr *Manager)ProcessIssueComment(repo *types.Repo, issue *github.Issue, comment *github.IssueComment) {
+func (mgr *Manager) ProcessIssueComment(repo *types.Repo, issue *github.Issue, comment *github.IssueComment) {
 	patch, err := mgr.mgr.MakeCommentPatch(repo, comment, &types.CommentAttach{
 		CommentType: "common comment",
-		Number: issue.GetNumber(),
-		CreatedAt: comment.GetCreatedAt(),
-		UpdatedAt: comment.GetUpdatedAt(),
+		Number:      issue.GetNumber(),
+		CreatedAt:   comment.GetCreatedAt(),
+		UpdatedAt:   comment.GetUpdatedAt(),
 		Association: comment.GetAuthorAssociation(),
 	})
 	if err != nil {
@@ -42,12 +42,12 @@ func (mgr *Manager)ProcessIssueComment(repo *types.Repo, issue *github.Issue, co
 }
 
 // ProcessPullRequestReviewComment process pull request review comment
-func (mgr *Manager)ProcessPullRequestReviewComment(repo *types.Repo, pull *github.PullRequest, comment *github.PullRequestComment) {
+func (mgr *Manager) ProcessPullRequestReviewComment(repo *types.Repo, pull *github.PullRequest, comment *github.PullRequestComment) {
 	patch, err := mgr.mgr.MakeCommentPatch(repo, comment, &types.CommentAttach{
 		CommentType: "review comment",
-		Number: pull.GetNumber(),
-		CreatedAt: comment.GetCreatedAt(),
-		UpdatedAt: comment.GetUpdatedAt(),
+		Number:      pull.GetNumber(),
+		CreatedAt:   comment.GetCreatedAt(),
+		UpdatedAt:   comment.GetUpdatedAt(),
 		Association: comment.GetAuthorAssociation(),
 	})
 	if err != nil {
@@ -58,16 +58,16 @@ func (mgr *Manager)ProcessPullRequestReviewComment(repo *types.Repo, pull *githu
 	}
 	if err := mgr.mgr.UpdateComment(patch); err != nil {
 		log.Errorf("update patch failed %v", err)
-	}	
+	}
 }
 
 // ProcessPullRequestReview process pull request review
-func (mgr *Manager)ProcessPullRequestReview(repo *types.Repo, pull *github.PullRequest, review *github.PullRequestReview) {
+func (mgr *Manager) ProcessPullRequestReview(repo *types.Repo, pull *github.PullRequest, review *github.PullRequestReview) {
 	patch, err := mgr.mgr.MakeCommentPatch(repo, review, &types.CommentAttach{
 		CommentType: "review",
-		Number: pull.GetNumber(),
-		CreatedAt: review.GetSubmittedAt(),
-		UpdatedAt: review.GetSubmittedAt(),
+		Number:      pull.GetNumber(),
+		CreatedAt:   review.GetSubmittedAt(),
+		UpdatedAt:   review.GetSubmittedAt(),
 		Association: "",
 	})
 	if err != nil {
@@ -78,5 +78,5 @@ func (mgr *Manager)ProcessPullRequestReview(repo *types.Repo, pull *github.PullR
 	}
 	if err := mgr.mgr.UpdateComment(patch); err != nil {
 		log.Errorf("update patch failed %v", err)
-	}		
+	}
 }

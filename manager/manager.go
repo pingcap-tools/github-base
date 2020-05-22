@@ -1,13 +1,14 @@
 package manager
 
 import (
-	"github.com/google/go-github/github"
+	"sync"
+
+	"github.com/google/go-github/v30/github"
 	"github.com/juju/errors"
 	"github.com/pingcap/github-base/config"
 	githubInit "github.com/pingcap/github-base/pkg/github"
 	"github.com/pingcap/github-base/pkg/storage"
 	"github.com/pingcap/github-base/pkg/storage/basic"
-	"sync"
 )
 
 // Manager represent schrodinger syncer
@@ -27,9 +28,9 @@ func New(cfg *config.Config) (*Manager, error) {
 	}
 
 	return &Manager{
-		Config: cfg,
+		Config:  cfg,
 		storage: s,
-		Github: githubInit.GetGithubClient(cfg.GithubToken),
+		Github:  githubInit.GetGithubClient(cfg.GithubToken),
 		Members: make(map[string]bool),
 	}, nil
 }

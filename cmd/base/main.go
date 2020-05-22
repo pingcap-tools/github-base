@@ -1,29 +1,34 @@
 package main
 
 import (
-	"fmt"
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/kataras/iris"
-	"github.com/juju/errors"
-	"github.com/ngaut/log"
-	"github.com/pingcap/github-base/config"
-	"github.com/pingcap/github-base/base/manager"
-	globalManager "github.com/pingcap/github-base/manager"
-	"github.com/pingcap/github-base/base/api"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/juju/errors"
+	"github.com/kataras/iris"
+	"github.com/ngaut/log"
+	"github.com/pingcap/github-base/base/api"
+	"github.com/pingcap/github-base/base/manager"
+	"github.com/pingcap/github-base/config"
+	globalManager "github.com/pingcap/github-base/manager"
+	"github.com/pingcap/github-base/pkg/types"
 )
 
 var (
-	cfg          *config.Config
-	configPath   string
+	cfg        *config.Config
+	configPath string
+	repo       string
+	owner      string
 )
 
 func init() {
 	flag.StringVar(&configPath, "c", "", "path to syncer config")
+	flag.StringVar(&repo, "r", "", "polling repo")
+	flag.StringVar(&owner, "o", "", "polling org")
 }
 
 func main() {
@@ -45,6 +50,18 @@ func main() {
 		log.Fatalf("can't run github-base: %v", errors.ErrorStack(err))
 	}
 	mgr := manager.New(globalMgr)
+
+	if repo != "" {
+		if owner == "" {
+			log.Fatal("org should not be empty")
+		}
+		mgr.PollingRepo(&types.Repo{Owner: owner, Repo: repo})
+		return
+	}
+	if owner != "" {
+		mgr.PollingOwner(owner)
+		return
+	}
 
 	go func() {
 		log.Infof("begin to listen %s:%d 😄", cfg.Host, cfg.Port)

@@ -2,11 +2,12 @@ package github
 
 import (
 	"context"
-	"github.com/google/go-github/github"
+	"os"
+
+	"github.com/google/go-github/v30/github"
 	"github.com/ngaut/log"
 	"github.com/pingcap/errors"
 	"golang.org/x/oauth2"
-	"os"
 )
 
 // GetGithubClient return client with auth

@@ -2,9 +2,10 @@ package util
 
 import (
 	"context"
+	"time"
+
 	"github.com/juju/errors"
 	"github.com/ngaut/log"
-	"time"
 )
 
 // RetryOnError try a possible fail event several times before fail
@@ -39,4 +40,9 @@ func Sleep(ctx context.Context, sleepTime time.Duration) {
 	case <-ticker.C:
 		return
 	}
+}
+
+// TimeoutContext create context with timeout
+func TimeoutContext(d time.Duration) (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), d)
 }

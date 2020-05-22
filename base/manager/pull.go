@@ -1,9 +1,9 @@
 package manager
 
 import (
-	"github.com/ngaut/log"
+	"github.com/google/go-github/v30/github"
 	"github.com/juju/errors"
-	"github.com/google/go-github/github"
+	"github.com/ngaut/log"
 	"github.com/pingcap/github-base/pkg/types"
 )
 

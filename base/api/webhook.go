@@ -36,7 +36,6 @@ func (hdl *ManagerHandler) Webhook(ctx iris.Context) {
 		// body parse error
 		log.Errorf("read json error %v", errors.ErrorStack(err))
 		ctx.StatusCode(iris.StatusInternalServerError)
-		ctx.WriteString(err.Error())
 		return
 	}
 	repoInfo := strings.Split(hookBody.Repository.FullName, "/")
@@ -44,7 +43,11 @@ func (hdl *ManagerHandler) Webhook(ctx iris.Context) {
 		// invalid repo name
 		log.Errorf("invalid repo name")
 		ctx.StatusCode(iris.StatusInternalServerError)
-		ctx.WriteString(err.Error())
+		if err != nil {
+			_, _ = ctx.WriteString(err.Error())
+		} else {
+			_, _ = ctx.WriteString("invalid repo name")
+		}
 		return
 	}
 	repo := &types.Repo{
@@ -58,7 +61,7 @@ func (hdl *ManagerHandler) Webhook(ctx iris.Context) {
 	if err != nil {
 		// invalid payload
 		ctx.StatusCode(iris.StatusInternalServerError)
-		ctx.WriteString(err.Error())
+		_, _ = ctx.WriteString(err.Error())
 		log.Errorf("invalid payload %v", errors.ErrorStack(err))
 		return
 	}
@@ -67,9 +70,9 @@ func (hdl *ManagerHandler) Webhook(ctx iris.Context) {
 		// event parse err
 		log.Errorf("webhook parse error %v", errors.ErrorStack(err))
 		ctx.StatusCode(iris.StatusInternalServerError)
-		ctx.WriteString(err.Error())
+		_, _ = ctx.WriteString(err.Error())
 		return
 	}
-	ctx.WriteString("ok")
+	_, _ = ctx.WriteString("ok")
 	hdl.mgr.Webhook(repo, event)
 }

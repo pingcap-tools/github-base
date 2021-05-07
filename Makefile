@@ -10,7 +10,7 @@ CURDIR := $(shell pwd)
 path_to_add := $(addsuffix /bin,$(subst :,/bin:,$(GOPATH))):$(PWD)/tools/bin
 export PATH := $(path_to_add):$(PATH)
 
-GO        := GO111MODULE=off go
+GO        := GO111MODULE=on go
 GOBUILD   := CGO_ENABLED=0 $(GO) build $(BUILD_FLAG) -tags codes
 GOTEST    := CGO_ENABLED=0 $(GO) test -p 4
 OVERALLS  := CGO_ENABLED=0 GO111MODULE=on overalls

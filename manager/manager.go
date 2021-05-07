@@ -17,7 +17,7 @@ type Manager struct {
 	Config  *config.Config
 	storage basic.Driver
 	Github  *github.Client
-	Members map[string]bool
+	Members map[string]IsMember
 }
 
 // New init manager
@@ -31,6 +31,6 @@ func New(cfg *config.Config) (*Manager, error) {
 		Config:  cfg,
 		storage: s,
 		Github:  githubInit.GetGithubClient(cfg.GithubToken),
-		Members: make(map[string]bool),
+		Members: make(map[string]IsMember),
 	}, nil
 }

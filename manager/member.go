@@ -2,14 +2,23 @@ package manager
 
 import (
 	"context"
+	"time"
+
 	"github.com/juju/errors"
 	"github.com/pingcap/github-base/util"
 )
 
-func (mgr *Manager)isMember(login string) (bool, error) {
+const EXPIRE = time.Hour
+
+type IsMember struct {
+	expected time.Time
+	is       bool
+}
+
+func (mgr *Manager) isMember(login string) (bool, error) {
 	isMember, exist := mgr.Members[login]
-	if exist {
-		return isMember, nil
+	if exist && isMember.expected.After(time.Now()) {
+		return isMember.is, nil
 	}
 
 	isPingCAPMember := false
@@ -21,7 +30,10 @@ func (mgr *Manager)isMember(login string) (bool, error) {
 		return errors.Trace(err)
 	})
 	if err == nil && isPingCAPMember {
-		mgr.Members[login] = isPingCAPMember
+		mgr.Members[login] = IsMember{
+			expected: time.Now().Add(EXPIRE),
+			is:       isPingCAPMember,
+		}
 		return isPingCAPMember, nil
 	} else if err != nil {
 		return false, errors.Trace(err)
@@ -36,17 +48,23 @@ func (mgr *Manager)isMember(login string) (bool, error) {
 		return errors.Trace(err)
 	})
 	if err == nil && isTikvMember {
-		mgr.Members[login] = isTikvMember
+		mgr.Members[login] = IsMember{
+			expected: time.Now().Add(EXPIRE),
+			is:       isPingCAPMember,
+		}
 		return isTikvMember, nil
 	} else if err != nil {
 		return false, errors.Trace(err)
 	}
 
-	mgr.Members[login] = false
+	mgr.Members[login] = IsMember{
+		expected: time.Now().Add(EXPIRE),
+		is:       isPingCAPMember,
+	}
 	return false, nil
 }
 
 // IsMember return if a user is pingcap/tikv member
-func (mgr *Manager)IsMember(login string) (bool, error) {
+func (mgr *Manager) IsMember(login string) (bool, error) {
 	return mgr.isMember(login)
 }
